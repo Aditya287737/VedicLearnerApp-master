@@ -1,57 +1,71 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
 
+// Function to generate a multiplication question
+const generateMultiplicationQuestion = () => {
+  // Generate two random numbers between 1 and 20
+  const num1 = Math.floor(Math.random() * 20) + 1;
+  const num2 = Math.floor(Math.random() * 20) + 1;
+
+  // Calculate the correct answer
+  const correctAnswer = num1 * num2;
+
+  // Generate unique incorrect options
+  const options = new Set();
+  while (options.size < 3) {
+    const option = Math.floor(Math.random() * 400) + 1; // Random options between 1 and 400
+    if (option !== correctAnswer) {
+      options.add(option);
+    }
+  }
+
+  // Combine correct answer with options and shuffle
+  const allOptions = [...options, correctAnswer].sort(() => Math.random() - 0.5);
+
+  return { num1, num2, correctAnswer, allOptions };
+};
+
 const MulPractice = ({ navigation }) => {
+  const [question, setQuestion] = useState(generateMultiplicationQuestion());
+
   const handleOptionPress = (option) => {
-    console.log(`Option ${option} selected`);
+    const message = option === question.correctAnswer ? 'Correct!' : 'Try Again!';
+    console.log(message);
   };
 
   return (
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerText}>Multipliation Practice</Text>
+        <Text style={styles.headerText}>Multiplication Practice</Text>
       </View>
 
       {/* Question Box */}
       <View style={styles.questionBox}>
-        <Text style={styles.questionText}>What is 3x20?</Text>
+        <Text style={styles.questionText}>
+          What is {question.num1} x {question.num2}?
+        </Text>
       </View>
 
       {/* Answer Options */}
       <ScrollView contentContainerStyle={styles.optionsContainer}>
-        <TouchableOpacity
-          style={[styles.optionButton, styles.option1]}
-          onPress={() => handleOptionPress('Option 1')}
-        >
-          <Text style={styles.optionText}>60</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.optionButton, styles.option2]}
-          onPress={() => handleOptionPress('Option 2')}
-        >
-          <Text style={styles.optionText}>27</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.optionButton, styles.option3]}
-          onPress={() => handleOptionPress('Option 3')}
-        >
-          <Text style={styles.optionText}>27</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.optionButton, styles.option4]}
-          onPress={() => handleOptionPress('Option 4')}
-        >
-          <Text style={styles.optionText}>27</Text>
-        </TouchableOpacity>
+        {question.allOptions.map((option, index) => (
+          <TouchableOpacity
+            key={index}
+            style={[styles.optionButton, styles[`option${index + 1}`]]}
+            onPress={() => handleOptionPress(option)}
+          >
+            <Text style={styles.optionText}>{option}</Text>
+          </TouchableOpacity>
+        ))}
         <TouchableOpacity
           style={[styles.button, styles.home]}
-          onPress={() =>
+          onPress={() => {
             navigation.navigate('Drawer', {
               screen: 'MainTabs',
               params: { screen: 'Practice' },
-            })
-          }
+            });
+          }}
         >
           <Text style={styles.buttonText}>Back to Practice Page</Text>
         </TouchableOpacity>

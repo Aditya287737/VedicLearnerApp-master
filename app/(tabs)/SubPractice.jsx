@@ -1,9 +1,38 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
 
+// Function to generate a subtraction question
+const generateSubtractionQuestion = () => {
+  const num1 = Math.floor(Math.random() * 100) + 1; // Random number between 1 and 100
+  const num2 = Math.floor(Math.random() * num1) + 1; // Random number less than or equal to num1
+  const correctAnswer = num1 - num2;
+
+  // Generate unique incorrect options
+  const options = new Set();
+  while (options.size < 3) {
+    const option = Math.floor(Math.random() * 100) + 1; // Random options between 1 and 100
+    if (option !== correctAnswer) {
+      options.add(option);
+    }
+  }
+
+  // Combine correct answer with options and shuffle
+  const allOptions = [...options, correctAnswer].sort(() => Math.random() - 0.5);
+
+  return { num1, num2, correctAnswer, allOptions };
+};
+
 const SubPractice = ({ navigation }) => {
+  const [question, setQuestion] = useState(generateSubtractionQuestion());
+
   const handleOptionPress = (option) => {
-    console.log(`Option ${option} selected`);
+    const message = option === question.correctAnswer ? 'Correct!' : 'Try Again!';
+    console.log(message);
+
+    if (option === question.correctAnswer) {
+      // Generate a new question after the correct answer
+      setQuestion(generateSubtractionQuestion());
+    }
   };
 
   return (
@@ -15,43 +44,30 @@ const SubPractice = ({ navigation }) => {
 
       {/* Question Box */}
       <View style={styles.questionBox}>
-        <Text style={styles.questionText}>What is 3x20?</Text>
+        <Text style={styles.questionText}>
+          What is {question.num1} - {question.num2}?
+        </Text>
       </View>
 
       {/* Answer Options */}
       <ScrollView contentContainerStyle={styles.optionsContainer}>
-        <TouchableOpacity
-          style={[styles.optionButton, styles.option1]}
-          onPress={() => handleOptionPress('Option 1')}
-        >
-          <Text style={styles.optionText}>60</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.optionButton, styles.option2]}
-          onPress={() => handleOptionPress('Option 2')}
-        >
-          <Text style={styles.optionText}>27</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.optionButton, styles.option3]}
-          onPress={() => handleOptionPress('Option 3')}
-        >
-          <Text style={styles.optionText}>27</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.optionButton, styles.option4]}
-          onPress={() => handleOptionPress('Option 4')}
-        >
-          <Text style={styles.optionText}>27</Text>
-        </TouchableOpacity>
+        {question.allOptions.map((option, index) => (
+          <TouchableOpacity
+            key={index}
+            style={[styles.optionButton, styles[`option${index + 1}`]]}
+            onPress={() => handleOptionPress(option)}
+          >
+            <Text style={styles.optionText}>{option}</Text>
+          </TouchableOpacity>
+        ))}
         <TouchableOpacity
           style={[styles.button, styles.home]}
-          onPress={() =>
+          onPress={() => {
             navigation.navigate('Drawer', {
               screen: 'MainTabs',
               params: { screen: 'Practice' },
-            })
-          }
+            });
+          }}
         >
           <Text style={styles.buttonText}>Back to Practice Page</Text>
         </TouchableOpacity>
