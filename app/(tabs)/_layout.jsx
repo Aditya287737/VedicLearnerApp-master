@@ -15,6 +15,10 @@ import Addition from './Addition';
 import Subtraction from './Subtraction';
 import Multiplication from './Multiplication';
 import Division from './Division';
+import AddPractice from './AddPractice';
+import SubPractice from './SubPractice';
+import MulPractice from './MulPractice';
+import DivPractice from './DivPractice';
 import { Colors } from '../../constants/Colors';
 import { useColorScheme } from '../../hooks/useColorScheme';
 import { Ionicons } from '@expo/vector-icons'; // If using Expo
@@ -147,6 +151,18 @@ export default function StackLayout() {
 
       {/* Global Screen for Division */}
       <Stack.Screen name="Division" component={Division} />
+
+      {/* Global Screen for Addition Practice */}
+      <Stack.Screen name="AddPractice" component={AddPractice} />
+
+      {/* Global Screen for Subtraction Practice */}
+      <Stack.Screen name="SubPractice" component={SubPractice} />
+
+      {/* Global Screen for Multiplication Practice */}
+      <Stack.Screen name="MulPractice" component={MulPractice} />
+
+      {/* Global Screen for Division Practice */}
+      <Stack.Screen name="DivPractice" component={DivPractice} />
 
     </Stack.Navigator>
   );
